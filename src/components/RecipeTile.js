@@ -21,7 +21,7 @@ function RecipeTile() {
     const fetchRecipes = async () => {
       try {
         const response = await axios.get(
-          "https://ec2-3-110-101-11.ap-south-1.compute.amazonaws.com/api/recipe/recipes/",
+          "http://ec2-3-110-101-11.ap-south-1.compute.amazonaws.com/api/recipe/recipes/",
           {
             headers: {
               Authorization: `Token ${token}`,
