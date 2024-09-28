@@ -15,7 +15,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 
 function RecipeTile() {
   const [recipes, setRecipes] = useState([]);
-  const token = "9575209bc950ce728d01f1c5825b6b982258f976";
+  const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
 
   useEffect(() => {
     const fetchRecipes = async () => {
