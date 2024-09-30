@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "http://ec2-3-110-101-11.ap-south-1.compute.amazonaws.com:8000/api/$1"
+      "source": "/backend/(.*)",
+      "destination": "http://ec2-3-110-101-11.ap-south-1.compute.amazonaws.com/api/$1"
     }
   ]
 }
