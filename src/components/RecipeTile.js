@@ -20,15 +20,12 @@ function RecipeTile() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get(
-          "http://ec2-3-110-101-11.ap-south-1.compute.amazonaws.com/api/recipe/recipes/",
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get("/api/recipe/recipes/", {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         setRecipes(response.data);
       } catch {
