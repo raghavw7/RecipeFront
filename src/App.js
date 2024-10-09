@@ -3,7 +3,8 @@ import RecipeTile from "./components/RecipeTile";
 import Navbar from "./components/NavBar";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import { Route, Routes } from "react-router-dom";
+import RecipeForm from "./components/RecipeForm";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 function App() {
   return (
@@ -14,8 +15,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/addrecipe" element={<RecipeForm />} />
         </Routes>
       </div>
+
       <div className="recipe-box">
         <RecipeTile />
       </div>

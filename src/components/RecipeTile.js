@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import RecipeForm from "./RecipeForm";
 
 import {
   Card,
@@ -13,9 +15,24 @@ import {
 import Stack from "@mui/material/Stack";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+
 function RecipeTile() {
   const [recipes, setRecipes] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
+  const navigate = useNavigate();
+
+  const handleClickAddRecipe = () => {
+    // navigate("/addrecipe");
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -44,13 +61,29 @@ function RecipeTile() {
     <div>
       {recipes ? (
         <Grid2 container spacing={3}>
+          {
+            <Card sx={{ width: 345 }}>
+              <CardMedia component="img" height="200" />
+              <Button
+                variant="outlined"
+                onClick={handleClickAddRecipe}
+                type="button"
+              >
+                Add Recipe
+              </Button>
+            </Card>
+          }
           {recipes.map((recipe, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={index}>
-              <Card sx={{ maxWidth: 345 }}>
+              <Card sx={{ width: 345 }}>
                 <CardMedia
                   component="img"
-                  height="140"
-                  image={recipe.image}
+                  height="200"
+                  image={
+                    recipe.image
+                      ? recipe.image
+                      : require("D:/Projects/React/recipe_front/recipe_front/src/upload_image_default.png")
+                  }
                   alt={recipe.title}
                 />
 
@@ -93,6 +126,12 @@ function RecipeTile() {
       ) : (
         <p> Loading....</p>
       )}
+
+      <Dialog open={openDialog} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogContent>
+          <RecipeForm handleClose={handleClose} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
