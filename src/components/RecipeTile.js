@@ -82,7 +82,7 @@ function RecipeTile() {
                   image={
                     recipe.image
                       ? recipe.image
-                      : require("D:/Projects/React/recipe_front/recipe_front/src/upload_image_default.png")
+                      : require("./upload_image_default.png")
                   }
                   alt={recipe.title}
                 />
