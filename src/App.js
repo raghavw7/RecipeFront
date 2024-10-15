@@ -4,25 +4,38 @@ import Navbar from "./components/NavBar";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import RecipeForm from "./components/RecipeForm";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import LoginForm from "./components/Login";
+import RecipeDetail from "./components/RecipeDetailView";
+import { Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./components/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
-    <>
-      <Navbar></Navbar>
-      <br></br>
+    <AuthProvider>
+      <Navbar />
+      {/* <br /> */}
       <div className="container">
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/about" element={<About />} />
-          <Route path="/addrecipe" element={<RecipeForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route
+            path="/addrecipe"
+            element={<PrivateRoute element={<RecipeForm />} />}
+          />
+          <Route path="/" element={<PrivateRoute element={<RecipeTile />} />} />
+          <Route
+            path="/recipeDetail"
+            element={<PrivateRoute element={<RecipeDetail />} />}
+          />
         </Routes>
       </div>
 
-      <div className="recipe-box">
+      {/* <div className="recipe-box">
         <RecipeTile />
-      </div>
-    </>
+      </div> */}
+    </AuthProvider>
   );
 }
 

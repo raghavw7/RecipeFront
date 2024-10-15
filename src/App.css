@@ -40,3 +40,12 @@
 .list-group-item {
   list-style: none;
 }
+
+.nav {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Space out items */
+  padding: 10px; /* Add some padding */
+  width: 100%; /* Ensure nav takes full width of its parent */
+  /* max-width: 1200px; Optional max width */
+  margin: 0 auto; /* Center nav if max-width is used */
+}
