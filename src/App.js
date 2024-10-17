@@ -26,7 +26,7 @@ function App() {
           />
           <Route path="/" element={<PrivateRoute element={<RecipeTile />} />} />
           <Route
-            path="/recipeDetail"
+            path="/recipeDetail/:recipeId"
             element={<PrivateRoute element={<RecipeDetail />} />}
           />
         </Routes>

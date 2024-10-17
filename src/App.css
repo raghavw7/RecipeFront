@@ -49,3 +49,12 @@
   /* max-width: 1200px; Optional max width */
   margin: 0 auto; /* Center nav if max-width is used */
 }
+
+.recipe-tile {
+  transition: transform 0.5s ease, box-shadow 0.5s ease-in-out;
+}
+
+.recipe-tile:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}

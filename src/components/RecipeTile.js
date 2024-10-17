@@ -17,6 +17,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import { Password } from "@mui/icons-material";
 
 function RecipeTile() {
   const [recipes, setRecipes] = useState([]);
@@ -24,6 +25,19 @@ function RecipeTile() {
 
   const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
   const navigate = useNavigate();
+
+  const handleRecipeTileClick = (id) => {
+    navigate(`/recipeDetail/${id}`);
+  };
+
+  const handleTagClick = () => {
+    // continue;
+    navigate(`/recipeDetail/`);
+  };
+
+  const handleIngredientClick = () => {
+    // continue;
+  };
 
   const handleClickAddRecipe = () => {
     // navigate("/addrecipe");
@@ -66,6 +80,7 @@ function RecipeTile() {
               <CardMedia component="img" height="200" />
               <Button
                 variant="outlined"
+                href="/about"
                 onClick={handleClickAddRecipe}
                 type="button"
               >
@@ -75,7 +90,11 @@ function RecipeTile() {
           }
           {recipes.map((recipe, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={index}>
-              <Card sx={{ width: 345 }}>
+              <Card
+                className="recipe-tile"
+                sx={{ width: 345 }}
+                onClick={() => handleRecipeTileClick(recipe.id)}
+              >
                 <CardMedia
                   component="img"
                   height="200"
@@ -92,28 +111,62 @@ function RecipeTile() {
                     {recipe.title}
                   </Typography>
 
-                  <Stack direction="row" spacing={1}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      display: "flex",
+                      alignContent: "center",
+                      justifyContent: "center",
+                      mb: 1,
+                    }}
+                  >
                     {recipe.tags.map((tag, index) => (
-                      <Chip key={index} label={tag.name} />
+                      <Chip
+                        sx={{
+                          alignContent: "center",
+                          justifyContent: "center",
+                        }}
+                        clickable
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleTagClick(tag);
+                        }}
+                        key={tag.id}
+                        label={tag.name}
+                        color="primary"
+                      />
+                      // <Chip key={index} label={tag.name} />
                     ))}
                   </Stack>
 
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    sx={{ marginTop: 2 }}
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      display: "flex",
+                      alignContent: "center",
+                      justifyContent: "center",
+                    }}
                   >
-                    Ingredients:
                     {recipe.ingredients.map((ingredient, index) => (
-                      <Typography
+                      <Chip
+                        sx={{
+                          alignContent: "center",
+                          justifyContent: "center",
+                        }}
+                        clickable
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleIngredientClick();
+                        }}
+                        variant="outlined"
+                        color="secondary"
                         key={index}
-                        variant="body2"
-                        color="textSecondary"
-                      >
-                        {ingredient.name}
-                      </Typography>
+                        label={ingredient.name}
+                      />
                     ))}
-                  </Typography>
+                  </Stack>
                 </CardContent>
 
                 <Button variant="outlined" startIcon={<FavoriteIcon />}>
