@@ -58,3 +58,21 @@
   transform: scale(1.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
+
+.noImage {
+  opacity: 0.6;
+  background-color: rgb(98, 98, 102, 0.5);
+}
+
+.noImage:hover {
+  opacity: 1;
+  background-color: rgb(98, 98, 102);
+}
+
+.addRecipeImage {
+  opacity: 0.5;
+}
+
+.addRecipeImage:hover {
+  opacity: 1;
+}

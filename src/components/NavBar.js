@@ -15,7 +15,8 @@ export default function Navbar() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(`/search/${query}`);
+    navigate(`/search?query=${query}`);
+    setQuery("");
   };
 
   return (

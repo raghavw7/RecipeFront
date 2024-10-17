@@ -29,6 +29,10 @@ function App() {
             path="/recipeDetail/:recipeId"
             element={<PrivateRoute element={<RecipeDetail />} />}
           />
+          <Route
+            path="/search"
+            element={<PrivateRoute element={<RecipeTile />} />}
+          />
         </Routes>
       </div>
 

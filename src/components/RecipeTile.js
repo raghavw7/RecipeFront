@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import RecipeForm from "./RecipeForm";
 
 import {
@@ -25,6 +25,10 @@ function RecipeTile() {
 
   const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuery = searchParams.get("query");
 
   const handleRecipeTileClick = (id) => {
     navigate(`/recipeDetail/${id}`);
@@ -51,43 +55,55 @@ function RecipeTile() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get(
-          "https://api.raghavgupta.site/api/recipe/recipes/",
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        let url = "https://api.raghavgupta.site/api/recipe/recipes";
+        if (searchQuery) {
+          url += `?search=${searchQuery}`;
+        }
+        // let searchQ = "cheese";
+        // url += `?search=${searchQ}`;
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         setRecipes(response.data);
       } catch {
         console.log("Error while fetching the recipes. Please retry.");
-        setRecipes({ error: "Failed" });
+        setRecipes([]);
       }
     };
 
     fetchRecipes();
-  }, []);
+  }, [searchQuery]);
 
   return (
     <div>
       {recipes ? (
         <Grid2 container spacing={3}>
-          {
+          {!searchQuery && (
             <Card sx={{ width: 345 }}>
-              <CardMedia component="img" height="200" />
+              <CardMedia
+                className="addRecipeImage"
+                component="img"
+                height="200"
+                image={require("./collage.jpg")}
+              />
               <Button
+                sx={{
+                  marginTop: "5px",
+                }}
                 variant="outlined"
-                href="/about"
+                // href="/about"
                 onClick={handleClickAddRecipe}
                 type="button"
               >
                 Add Recipe
               </Button>
             </Card>
-          }
+          )}
+
           {recipes.map((recipe, index) => (
             <Grid2 item xs={12} sm={6} md={4} key={index}>
               <Card
@@ -95,7 +111,9 @@ function RecipeTile() {
                 sx={{ width: 345 }}
                 onClick={() => handleRecipeTileClick(recipe.id)}
               >
+                {/* {recipe.image && ( */}
                 <CardMedia
+                  className={!recipe.image ? "noImage" : ""}
                   component="img"
                   height="200"
                   image={
@@ -105,7 +123,20 @@ function RecipeTile() {
                   }
                   alt={recipe.title}
                 />
-
+                {/* )} */}
+                {/* {!recipe.image && (
+                  <CardMedia
+                    className="noImage"
+                    component="img"
+                    height="200"
+                    image={
+                      recipe.image
+                        ? recipe.image
+                        : require("./upload_image_default.png")
+                    }
+                    alt={recipe.title}
+                  />
+                )} */}
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {recipe.title}
@@ -169,8 +200,17 @@ function RecipeTile() {
                   </Stack>
                 </CardContent>
 
-                <Button variant="outlined" startIcon={<FavoriteIcon />}>
-                  Like
+                <Button
+                  variant="outlined"
+                  // color="#ff1744"
+                  sx={{
+                    marginBottom: "5px",
+                    color: "#ff4081",
+                  }}
+                  startIcon={<FavoriteIcon />}
+                  // gutterBottom
+                >
+                  Love
                 </Button>
               </Card>
             </Grid2>
