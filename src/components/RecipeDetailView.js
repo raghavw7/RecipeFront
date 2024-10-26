@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { CardMedia, Typography, Button, Chip, Box, Grid2 } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 function RecipeDetail() {
+  const { token } = useAuth();
+
   const [recipe, setRecipe] = useState([]);
-  const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
+  // const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
 
   const { recipeId } = useParams();
   useEffect(() => {
@@ -21,6 +24,7 @@ function RecipeDetail() {
           }
         );
 
+        console.log(response.data); // Log the full response here
         setRecipe(response.data);
       } catch (error) {
         console.log("Error while loading the recipe...");
@@ -41,18 +45,6 @@ function RecipeDetail() {
         display: "flex",
       }}
     >
-      {/* <Box
-        component="img"
-        src={recipe.image}
-        alt={recipe.title}
-        sx={{
-          display: "block", // Set to block to remove inline spacing issues
-          width: "50%", // This will make the image scale to the width of the parent container
-          height: "50%", // This will ensure the height adjusts automatically to preserve aspect ratio
-          padding: "2px", // Keeps your padding
-          backgroundColor: "black", // Background color won't affect the image, but can remain if needed
-        }}
-      /> */}
       <Box
         component="img"
         src={recipe.image}
@@ -94,7 +86,12 @@ function RecipeDetail() {
           }}
           gutterBottom
         >
-          By Raghav Gupta
+          {recipe && recipe.user ? (
+            <p>By {recipe.user.name}</p>
+          ) : (
+            <p>Loading...</p>
+          )}
+          {/* By {recipe.user.name || "Raghav"} */}
         </Typography>
         <br></br>
         <Box

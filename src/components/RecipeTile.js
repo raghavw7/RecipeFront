@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import RecipeForm from "./RecipeForm";
+import { useAuth } from "./AuthContext";
 
 import {
   Card,
@@ -23,26 +24,63 @@ function RecipeTile() {
   const [recipes, setRecipes] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
+  // const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
+  const { token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get("query");
 
+  // const [tag, setTag] = useState();
+  // const [ingredient, setIngredient] = useState();
+
+  const [tagList, setTagList] = useState([]);
+  const [ingredientList, setIngredientList] = useState([]);
+  const [likedList, setLikedList] = useState([]);
+
   const handleRecipeTileClick = (id) => {
     navigate(`/recipeDetail/${id}`);
   };
 
-  const handleTagClick = () => {
-    // continue;
-    navigate(`/recipeDetail/`);
+  const handleTagClick = (tag_id) => {
+    if (tagList.includes(tag_id)) {
+      setTagList((prev) => prev.filter((id) => id !== tag_id));
+    } else {
+      setTagList((prev) => [...prev, tag_id]);
+    }
   };
 
-  const handleIngredientClick = () => {
-    // continue;
+  const handleIngredientClick = (ingredient_id) => {
+    if (ingredientList.includes(ingredient_id)) {
+      setIngredientList((prev) => prev.filter((id) => id !== ingredient_id));
+    } else {
+      setIngredientList((prev) => [...prev, ingredient_id]);
+    }
   };
 
+  const handleLoveButtonClick = async (recipe_id) => {
+    console.log(recipe_id);
+    try {
+      let url = `https://api.raghavgupta.site/api/recipe/recipes/${recipe_id}/like_recipe/`;
+      const response = await axios.post(
+        url,
+        {},
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data.status);
+      console.log(response);
+
+      if (response.data.status === "liked") console.log("liked");
+    } catch (error) {
+      console.log("Error posting the like. Please retry.", error);
+    }
+  };
   const handleClickAddRecipe = () => {
     // navigate("/addrecipe");
     setOpenDialog(true);
@@ -55,12 +93,31 @@ function RecipeTile() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
+        console.log(location);
         let url = "https://api.raghavgupta.site/api/recipe/recipes";
-        if (searchQuery) {
-          url += `?search=${searchQuery}`;
+        if (location.pathname.includes("/user-recipes")) {
+          url = "https://api.raghavgupta.site/api/recipe/recipes/user-recipes";
         }
-        // let searchQ = "cheese";
-        // url += `?search=${searchQ}`;
+        const queryParams = [];
+
+        if (searchQuery) {
+          queryParams.push(`search=${searchQuery}`);
+        }
+
+        if (tagList.length > 0) {
+          const tagUrl = tagList.map((x) => String(x)).join(",");
+          queryParams.push(`tags=${tagUrl}`);
+        }
+        if (ingredientList.length > 0) {
+          const ingredientUrl = ingredientList.map((x) => String(x)).join(",");
+          queryParams.push(`ingredients=${ingredientUrl}`);
+        }
+
+        if (queryParams.length > 0) {
+          url += `?${queryParams.join("&")}`;
+        }
+
+        console.log(url);
         const response = await axios.get(url, {
           headers: {
             Authorization: `Token ${token}`,
@@ -68,6 +125,7 @@ function RecipeTile() {
           },
         });
 
+        console.log(location);
         setRecipes(response.data);
       } catch {
         console.log("Error while fetching the recipes. Please retry.");
@@ -76,7 +134,7 @@ function RecipeTile() {
     };
 
     fetchRecipes();
-  }, [searchQuery]);
+  }, [searchQuery, tagList, ingredientList, location]);
 
   return (
     <div>
@@ -123,20 +181,7 @@ function RecipeTile() {
                   }
                   alt={recipe.title}
                 />
-                {/* )} */}
-                {/* {!recipe.image && (
-                  <CardMedia
-                    className="noImage"
-                    component="img"
-                    height="200"
-                    image={
-                      recipe.image
-                        ? recipe.image
-                        : require("./upload_image_default.png")
-                    }
-                    alt={recipe.title}
-                  />
-                )} */}
+
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {recipe.title}
@@ -156,18 +201,19 @@ function RecipeTile() {
                       <Chip
                         sx={{
                           alignContent: "center",
-                          justifyContent: "center",
                         }}
                         clickable
                         onClick={(event) => {
                           event.stopPropagation();
-                          handleTagClick(tag);
+                          handleTagClick(tag.id);
                         }}
+                        variant={
+                          tagList.includes(tag.id) ? "filled" : "outlined"
+                        }
                         key={tag.id}
                         label={tag.name}
                         color="primary"
                       />
-                      // <Chip key={index} label={tag.name} />
                     ))}
                   </Stack>
 
@@ -189,9 +235,13 @@ function RecipeTile() {
                         clickable
                         onClick={(event) => {
                           event.stopPropagation();
-                          handleIngredientClick();
+                          handleIngredientClick(ingredient.id);
                         }}
-                        variant="outlined"
+                        variant={
+                          ingredientList.includes(ingredient.id)
+                            ? "filled"
+                            : "outlined"
+                        }
                         color="secondary"
                         key={index}
                         label={ingredient.name}
@@ -206,6 +256,10 @@ function RecipeTile() {
                   sx={{
                     marginBottom: "5px",
                     color: "#ff4081",
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleLoveButtonClick(recipe.id);
                   }}
                   startIcon={<FavoriteIcon />}
                   // gutterBottom

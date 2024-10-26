@@ -1,12 +1,22 @@
-import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
+import {
+  Link,
+  useMatch,
+  useNavigate,
+  useResolvedPath,
+  useLocation,
+} from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import { useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 export default function Navbar() {
   const { token, logout } = useAuth();
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const searchpath = useContext(location.pathname);
 
   const handleLogout = () => {
     logout();
@@ -15,8 +25,19 @@ export default function Navbar() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(`/search?query=${query}`);
+    let url = "";
+    url = location.pathname.includes("/user-recipes")
+      ? `/user-recipes/search?query=${query}`
+      : location.pathname.includes("/liked-recipes")
+      ? `/user-recipes/search?query=${query}`
+      : `/search?query=${query}`;
+    navigate(url);
     setQuery("");
+  };
+
+  const handleLoveButtom = (e) => {
+    e.preventDefault();
+    navigate("liked-recipes");
   };
 
   return (
@@ -49,6 +70,20 @@ export default function Navbar() {
         >
           Make Me
         </Link>
+
+        <Button
+          variant="outlined"
+          // color="#ff1744"
+          sx={{
+            marginBottom: "5px",
+            color: "#ff4081",
+          }}
+          onClick={handleLoveButtom}
+          startIcon={<FavoriteIcon />}
+          // gutterBottom
+        >
+          Loved Recipes
+        </Button>
 
         <Box
           component="form"
@@ -103,6 +138,7 @@ export default function Navbar() {
           }}
         >
           <CustomLink to="/"> Home </CustomLink>
+          <CustomLink to="/user-recipes"> My Recipes</CustomLink>
           <CustomLink to="/about"> About </CustomLink>
 
           {token ? (

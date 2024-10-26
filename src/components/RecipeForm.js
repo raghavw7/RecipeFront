@@ -4,8 +4,10 @@ import { TextField, Button, Grid2, Typography, Paper } from "@mui/material";
 
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import { useAuth } from "./AuthContext";
 
 const RecipeForm = () => {
+  const { token } = useAuth();
   const [recipe, setRecipe] = useState({
     title: "",
     time_minutes: "",
@@ -32,7 +34,8 @@ const RecipeForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
+
+    // const token = "70286b25b2b19a980c34dd79698aa4c7df5dc406";
     try {
       const response = await fetch(
         "https://api.raghavgupta.site/api/recipe/recipes/",
