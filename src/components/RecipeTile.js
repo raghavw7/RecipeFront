@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, render } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import RecipeForm from "./RecipeForm";
@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { Password } from "@mui/icons-material";
@@ -32,12 +32,9 @@ function RecipeTile() {
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get("query");
 
-  // const [tag, setTag] = useState();
-  // const [ingredient, setIngredient] = useState();
-
   const [tagList, setTagList] = useState([]);
   const [ingredientList, setIngredientList] = useState([]);
-  const [likedList, setLikedList] = useState([]);
+  const [likedList, setLikedList] = useState({});
 
   const handleRecipeTileClick = (id) => {
     navigate(`/recipeDetail/${id}`);
@@ -60,7 +57,6 @@ function RecipeTile() {
   };
 
   const handleLoveButtonClick = async (recipe_id) => {
-    console.log(recipe_id);
     try {
       let url = `https://api.raghavgupta.site/api/recipe/recipes/${recipe_id}/like_recipe/`;
       const response = await axios.post(
@@ -74,13 +70,15 @@ function RecipeTile() {
         }
       );
       console.log(response.data.status);
-      console.log(response);
 
-      if (response.data.status === "liked") console.log("liked");
+      if (response.data.status === "liked")
+        setLikedList((prev) => ({ ...prev, [recipe_id]: true }));
+      else setLikedList((prev) => ({ ...prev, [recipe_id]: false }));
     } catch (error) {
       console.log("Error posting the like. Please retry.", error);
     }
   };
+
   const handleClickAddRecipe = () => {
     // navigate("/addrecipe");
     setOpenDialog(true);
@@ -97,6 +95,8 @@ function RecipeTile() {
         let url = "https://api.raghavgupta.site/api/recipe/recipes";
         if (location.pathname.includes("/user-recipes")) {
           url = "https://api.raghavgupta.site/api/recipe/recipes/user-recipes";
+        } else if (location.pathname.includes("/liked-recipes")) {
+          url = "https://api.raghavgupta.site/api/recipe/recipes/liked-recipes";
         }
         const queryParams = [];
 
@@ -125,8 +125,14 @@ function RecipeTile() {
           },
         });
 
+        const initialLikedStatus = response.data.reduce((acc, recipe) => {
+          acc[recipe.id] = recipe.is_liked;
+          return acc;
+        }, {});
+
         console.log(location);
         setRecipes(response.data);
+        setLikedList(initialLikedStatus);
       } catch {
         console.log("Error while fetching the recipes. Please retry.");
         setRecipes([]);
@@ -134,7 +140,7 @@ function RecipeTile() {
     };
 
     fetchRecipes();
-  }, [searchQuery, tagList, ingredientList, location]);
+  }, [searchQuery, tagList, ingredientList, location, token]);
 
   return (
     <div>
@@ -256,15 +262,21 @@ function RecipeTile() {
                   sx={{
                     marginBottom: "5px",
                     color: "#ff4081",
+                    alignContent: "center",
                   }}
                   onClick={(event) => {
                     event.stopPropagation();
                     handleLoveButtonClick(recipe.id);
                   }}
-                  startIcon={<FavoriteIcon />}
-                  // gutterBottom
+                  startIcon={
+                    likedList[recipe.id] ? (
+                      <FavoriteIcon />
+                    ) : (
+                      <FavoriteBorderIcon />
+                    )
+                  }
                 >
-                  Love
+                  {likedList[recipe.id] ? "Unlove" : "Love"}
                 </Button>
               </Card>
             </Grid2>

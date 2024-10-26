@@ -45,6 +45,11 @@ function App() {
             path="/user-recipes/search"
             element={<PrivateRoute element={<RecipeTile searchpath />} />}
           />
+
+          <Route
+            path="/liked-recipes"
+            element={<PrivateRoute element={<RecipeTile />} />}
+          />
         </Routes>
       </div>
     </AuthProvider>
